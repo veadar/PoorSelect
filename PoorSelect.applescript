@@ -1,7 +1,25 @@
 on run --for dialog
 	if existsWindow() then
-		display dialog "Filter word" default answer "" buttons {"OK"} default button 1
-		set userInput to text returned of result
+		display dialog "Filter word" default answer "" buttons {"and search", "or search", "search"} default button 3
+		
+		set userInput to result
+		
+		set userInputButton to button returned of userInput
+		
+		set userInputText to text returned of userInput
+		
+		if userInputButton is "search" then
+			set userInput to userInputText
+		else if userInputButton is "or search" then
+			set textList to makeList(userInputText, " ")
+			set userInput to ""
+			repeat with i from 1 to number of items in textList
+				set this_item to item i of textList
+				set userInput to userInput & "-e " & this_item & " "
+			end repeat
+		else if userInputButton is "and search" then
+			set userInput to replaceText(userInputText, " ", " | grep ")
+		end if
 		main(userInput)
 	end if
 end run
@@ -68,3 +86,21 @@ on main(userInput)
 		
 	end try
 end main
+
+on makeList(theText, theDelimiter) --テキストを指定語句で区切り配列に格納する
+	set tmp to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to theDelimiter
+	set theList to every text item of theText
+	set AppleScript's text item delimiters to tmp
+	return theList
+end makeList
+
+on replaceText(theText, serchStr, replaceStr)
+	set tmp to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to serchStr
+	set theList to every text item of theText
+	set AppleScript's text item delimiters to replaceStr
+	set theText to theList as string
+	set AppleScript's text item delimiters to tmp
+	return theText
+end replaceText

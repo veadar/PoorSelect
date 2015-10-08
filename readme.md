@@ -16,6 +16,9 @@ Example
 - ^[0-9]
 - png$
 - -d txt
+- -i hoge
+- hoge | grep fuga
+- e hoge -e fuga
 
 ##Download
 
