@@ -18,7 +18,7 @@ Example
 - -d txt
 - -i hoge
 - hoge | grep fuga
-- e hoge -e fuga
+- -e hoge -e fuga
 
 ##Download
 
