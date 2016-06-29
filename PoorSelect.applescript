@@ -52,7 +52,7 @@ on main(userInput)
 		set posixPath to (targetFolder as alias)'s POSIX path
 	end tell
 	
-	set shellText to "ls " & quoted form of posixPath & " | iconv -f UTF-8-MAC -t UTF-8 | grep " & userInput
+	set shellText to "ls " & quoted form of posixPath & " | iconv -c -f UTF-8-MAC -t UTF-8 | grep " & userInput
 	
 	try
 		set tempList to do shell script shellText
@@ -64,8 +64,10 @@ on main(userInput)
 		set fileList to {}
 		
 		repeat with an_item in contents of listWrapper
+		try --iconv‚Å•ÏŠ·‚Å‚«‚È‚©‚Á‚½ƒtƒ@ƒCƒ‹‚ð–³Ž‹‚·‚é
 			set filePath to posixPath & an_item
 			set end of fileList to POSIX file filePath as alias
+			end try
 		end repeat
 		
 		tell application "Finder"
