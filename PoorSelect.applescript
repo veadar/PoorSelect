@@ -1,4 +1,4 @@
-on run --for dialog
+script MyScript
 	if existsWindow() then
 		display dialog "Filter word" default answer "" buttons {"and search", "or search", "search"} default button 3
 		
@@ -18,10 +18,16 @@ on run --for dialog
 				set userInput to userInput & "-e " & this_item & " "
 			end repeat
 		else if userInputButton is "and search" then
-			set userInput to replaceText(userInputText, " ", " | grep ")
+			set userInput to replaceText(userInputText, " ", " | grep -i ")
 		end if
 		main(userInput)
 	end if
+end script
+
+on run --for dialog
+	local tempScript
+	copy MyScript to tempScript
+	run tempScript
 end run
 
 on alfred_script(userInput) --for Alfred
@@ -52,7 +58,7 @@ on main(userInput)
 		set posixPath to (targetFolder as alias)'s POSIX path
 	end tell
 	
-	set shellText to "ls " & quoted form of posixPath & " | iconv -c -f UTF-8-MAC -t UTF-8 | grep " & userInput
+	set shellText to "ls " & quoted form of posixPath & " | iconv -c -f UTF-8-MAC -t UTF-8 | grep -i " & userInput
 	
 	try
 		set tempList to do shell script shellText
@@ -64,9 +70,9 @@ on main(userInput)
 		set fileList to {}
 		
 		repeat with an_item in contents of listWrapper
-		try --iconv‚Å•ÏŠ·‚Å‚«‚È‚©‚Á‚½ƒtƒ@ƒCƒ‹‚ð–³Ž‹‚·‚é
-			set filePath to posixPath & an_item
-			set end of fileList to POSIX file filePath as alias
+			try
+				set filePath to posixPath & an_item
+				set end of fileList to POSIX file filePath as alias
 			end try
 		end repeat
 		
